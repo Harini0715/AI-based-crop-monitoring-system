@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Yield Predictor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .hero {
+            background-image: url('https://images.pexels.com/photos/1227513/pexels-photo-1227513.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+            background-size: cover;
+            background-position: center;
+            height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+        }
+
+        .card {
+            margin: 20px 0;
+            border: none;
+            border-radius: 10px;
+        }
+
+        .card-body {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="hero">
+        <div class="text-center">
+            <h1 class="display-4">Crop Yield Predictor</h1>
+            <p class="lead">Get the best crop recommendations based on your land's weather conditions.</p>
+        </div>
+    </header>
+
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Sensor Data</h5>
+                        <p id="sensor-data">Loading...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Climate Data</h5>
+                        <p id="climate-data">Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Predicted Yield</h5>
+                        <p id="predicted-yield">Loading...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Recommended Crops</h5>
+                        <p id="recommended-crops">Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center my-4">
+            <button id="download" class="btn btn-primary btn-lg">Download Data as CSV</button>
+        </div>
+    </div>
+
+    <footer class="text-center">
+        <p>&copy; 2024 Crop Yield Predictor. All Rights Reserved.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        async function fetchData() {
+            const response = await fetch('/data');
+            const data = await response.json();
+
+            document.getElementById('sensor-data').innerText = 
+                `Temperature: ${data.sensor_data.temperature} °C\n` +
+                `Humidity: ${data.sensor_data.humidity} %\n` +
+                `Soil Moisture: ${data.sensor_data.soilMoisture} %`;
+
+            document.getElementById('climate-data').innerText =
+                `Forecasted Temperature: ${data.climate_data.forecasted_temperature} °C\n` +
+                `Forecasted Humidity: ${data.climate_data.forecasted_humidity} %\n` +
+                `Precipitation: ${data.climate_data.precipitation} mm`;
+
+            document.getElementById('predicted-yield').innerText = 
+                `Predicted Yield: ${data.predicted_yield} kg/ha`;
+
+            document.getElementById('recommended-crops').innerText = 
+                data.recommended_crops.length ? data.recommended_crops.join(', ') : 'No suitable crops found.';
+        }
+
+        document.getElementById('download').addEventListener('click', function() {
+            window.location.href = '/download';
+        });
+
+        window.onload = fetchData;
+    </script>
+
+</body>
+
+</html>
